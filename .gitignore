@@ -1,0 +1,147 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+.npm/
+bower_components/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+!.env*.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials.json
+service-account*.json
+
+# Builds & output
+dist/
+build/
+out/
+.next/
+.turbo/
+.nuxt/
+.output/
+*.tsbuildinfo
+next-env.d.ts
+
+# NestJS
+backend/dist/
+
+# Prisma
+**/generated/
+prisma/*.db
+prisma/*.db-journal
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs & debug
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Testing & coverage
+coverage/
+.nyc_output/
+*.lcov
+.jest/
+test-results/
+playwright-report/
+playwright/.cache/
+cypress/videos/
+cypress/screenshots/
+
+# Caches
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+.prettiercache
+*.tsbuildinfo
+.swc/
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Package managers
+package-lock.json.bak
+yarn.lock.bak
+pnpm-lock.yaml.bak
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# IDE / editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+.project
+.classpath
+.settings/
+*.code-workspace
+
+# Deploy / cloud
+.vercel
+.railway
+.netlify
+.serverless/
+.wrangler/
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Docker
+docker-compose.override.yml
+
+# Temp & misc
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.local
+.history/
+.fleet/
+
+# Storybook
+storybook-static/
+
+# Sentry
+.sentryclirc
+
+# Optional local tooling
+.direnv/
+.nvmrc.local

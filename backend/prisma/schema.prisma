@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  RECEPTIONIST
+  DENTIST
+}
+
+enum PatientStatus {
+  NEW
+  ACTIVE
+  RECALL_DUE
+  CONTACTED
+  APPOINTMENT_SCHEDULED
+  COMPLETED
+  INACTIVE
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum ActivityAction {
+  USER_LOGIN
+  PATIENT_CREATED
+  PATIENT_UPDATED
+  STATUS_CHANGED
+  APPOINTMENT_BOOKED
+  APPOINTMENT_UPDATED
+  APPOINTMENT_COMPLETED
+  APPOINTMENT_CANCELLED
+  REMINDER_SENT
+  RECALL_GENERATED
+  EMAIL_SENT
+}
+
+enum NotificationType {
+  APPOINTMENT
+  RECALL
+  SYSTEM
+  REMINDER
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      UserRole @default(RECEPTIONIST)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  dentist       Dentist?
+  activityLogs  ActivityLog[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Dentist {
+  id        String  @id @default(cuid())
+  name      String
+  specialty String
+  userId    String? @unique
+  active    Boolean @default(true)
+
+  user         User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  appointments Appointment[]
+
+  @@map("dentists")
+}
+
+model Patient {
+  id                String        @id @default(cuid())
+  pid               String        @unique
+  firstName         String
+  lastName          String
+  email             String?
+  phone             String
+  birthDate         DateTime
+  address           String?
+  emergencyContact  String?
+  insuranceProvider String?
+  insuranceNumber   String?
+  notes             String?
+  status            PatientStatus @default(NEW)
+  lastAppointment   DateTime?
+  nextRecallDate    DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  appointments  Appointment[]
+  medicalNotes  MedicalNote[]
+  activityLogs  ActivityLog[]
+
+  @@index([status])
+  @@index([lastName, firstName])
+  @@index([phone])
+  @@index([nextRecallDate])
+  @@map("patients")
+}
+
+model Appointment {
+  id              String            @id @default(cuid())
+  patientId       String
+  dentistId       String
+  operatoryId     String?
+  appointmentDate DateTime
+  duration        Int               @default(30)
+  status          AppointmentStatus @default(SCHEDULED)
+  notes           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  patient   Patient    @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  dentist   Dentist    @relation(fields: [dentistId], references: [id])
+  operatory Operatory? @relation(fields: [operatoryId], references: [id])
+
+  @@index([appointmentDate])
+  @@index([dentistId, appointmentDate])
+  @@index([operatoryId, appointmentDate])
+  @@map("appointments")
+}
+
+model Operatory {
+  id       String  @id @default(cuid())
+  name     String
+  chair    String
+  active   Boolean @default(true)
+
+  appointments Appointment[]
+
+  @@map("operatories")
+}
+
+model MedicalNote {
+  id        String   @id @default(cuid())
+  patientId String
+  content   String
+  authorId  String?
+  createdAt DateTime @default(now())
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@map("medical_notes")
+}
+
+model ActivityLog {
+  id        String         @id @default(cuid())
+  userId    String?
+  patientId String?
+  action    ActivityAction
+  details   String?
+  timestamp DateTime       @default(now())
+
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  patient Patient? @relation(fields: [patientId], references: [id], onDelete: SetNull)
+
+  @@index([timestamp])
+  @@map("activity_logs")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType @default(SYSTEM)
+  read      Boolean          @default(false)
+  link      String?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@map("notifications")
+}
+
+model ClinicSettings {
+  id                    String @id @default("default")
+  clinicName            String @default("DentalFlow Clinic")
+  address               String?
+  phone                 String?
+  email                 String?
+  businessHours         Json   @default("{}")
+  reminderHoursBefore   Int    @default(24)
+  recallIntervalMonths  Int    @default(6)
+  inactiveYears         Int    @default(3)
+  emailTemplates        Json   @default("{}")
+
+  @@map("clinic_settings")
+}
