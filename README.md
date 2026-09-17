@@ -4,6 +4,8 @@ A production-quality dental office management platform built with modern full-st
 
 ![DentalFlow](https://img.shields.io/badge/DentalFlow-Practice%20Management-2563eb)
 
+Try it out here! https://dental--flow.vercel.app/
+
 ## Overview
 
 DentalFlow is a commercial-grade SaaS platform for dental clinics featuring:
